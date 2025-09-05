@@ -1,55 +1,5 @@
 'use strict'
 
-/*--------------Cryptography--------------*/
-const Shuffle=A=>A.sort(()=>Math.random()-0.5) // Change the order of elements randomly like a deck of cards 🃏🎴
-// e.g. Shuffle(['A','B','C','D','E','F','G','H','I']) , Shuffle([1,2,3,4,5,6,7,8,9]), Shuffle(['🃏','♣️','♠️','♥️','♦️'])
-
-/* These Cryptographically Secure Pseudorandom Number Generation (CSPRNG) functions are commented out because 
-        require('crypto') only works in NodeJS and window.crypto only work in HTML.
-    Uncomment whichever you want, depending on which environment you use.
-    These do not use True Random Number Generation (TRNG)
-
-    ,crypto=require('crypto')
-    ,NodeJS_CSPRNG_i32=()=>crypto.randomBytes(4).readUInt32BE(0) // Generate a CSPRNG integer between 0 and 2^32-1 inclusive in NodeJS
-    ,NodeJS_CSPRNG_Coinflip=()=>NodeJS_CSPRNG_i32()&1 // &1 is more efficient than %. It only works for coin flips.
-    ,NodeJS_CSPRNG_Range=(min,max)=>{// Generate a CSPRNG integer in a range between min and max inclusive in NodeJS
-        if(!Number.isInteger(min)||!Number.isInteger(max)||min<0||max<0)return'Boundaries must be positive integers'
-        return Math.min(min,max)+(NodeJS_CSPRNG_i32()%(Math.abs(max-min)+1)) // range = Math.abs(max-min)+1
-        // Math.abs & Math.min are used in case min is accidentally entered larger than max
-    }
-    // e.g. 🪙 Coin Flip: NodeJS_CSPRNG_Coinflip() //➜ 0 to 1 , 🎲 Dice Roll: NodeJS_CSPRNG_Range(1,6) //➜ 1 to 6
-    // if you want i number of generations (change i as needed):
-    // for(let i=0;++i<=256;)console.log(i+': '+NodeJS_CSPRNG_Coinflip()) , for(let i=0;++i<=99;)console.log(i+': '+NodeJS_CSPRNG_Range(6,1))
-    let s='';for(let i=0;++i<=256;)s+=NodeJS_CSPRNG_Coinflip()
-    let s='';for(let i=0;++i<=99;)s+=NodeJS_CSPRNG_Range(6,1)
-
-    ,HTML_CSPRNG_i32=()=>{// Generate a CSPRNG integer between 0 and 2^32-1 inclusive in HTML
-        const A=new Uint8Array(4);window.crypto.getRandomValues(A)
-        return (((A[0]<<24)|(A[1]<<16)|(A[2]<<8)|A[3])>>>0)
-    }
-    ,HTML_CSPRNG_Coinflip=()=>HTML_CSPRNG_i32()&1 // &1 is more efficient than %. It only works for coin flips.
-    ,HTML_CSPRNG_Range=(min,max)=>{// Generate a CSPRNG integer in a range between min and max inclusive in HTML
-        if(!Number.isInteger(min)||!Number.isInteger(max)||min<0||max<0)return'Boundaries must be positive integers'
-        return Math.min(min,max)+(HTML_CSPRNG_i32()%(Math.abs(max-min)+1)) // range = Math.abs(max-min)+1
-    }
-    // e.g. 🪙 Coin Flip: HTML_CSPRNG_Coinflip() //➜ 0 to 1 , 🎲 Dice Roll: HTML_CSPRNG_Range(1,6) //➜ 1 to 6
-    // if you want i number of generations (change i as needed): 
-    // for(let i=0;++i<=256;)console.log(i+': '+HTML_CSPRNG_Coinflip()) , for(let i=0;++i<=99;)console.log(i+': '+HTML_CSPRNG_Range(6,1))
-    // let s;s='';for(let i=0;++i<=256;)s+=HTML_CSPRNG_Coinflip()
-*/
-,DiceToCoins=SA=>{// Convert each die roll 🎲 in an array [] or string '' SA to a coin flip 🪙. Not to confuse with Base6 to binary conversion.
-    if(Array.isArray(SA)){//Array - converts odd 1, 3 & 5 to 1 and even 2, 4 & 6 to 0.
-        const L=SA.length,a=new Int8Array(L);for(let i=-1;++i<L;)a[i]=SA[i]&1;return a
-    }//else if String - converts whatever you want to whatever you want.
-        return SA.replaceAll('2','1').replaceAll('3','1').replaceAll('4','0').replaceAll('5','0').replaceAll('6','0')
-        // This example is slightly more efficient because 1 is 1, so there's no need to replace it.
-}/*
-    e.g. DiceToCoins([6,5,1,2,3,4]) //➜ [0,1,1,0,1,0] , DiceToCoins('651234') //➜ '001110'
-
-    Bear in mind, it's also possible to convert 0-5 Base 6 to Base 2 using: parseInt('543210',6).toString(2) //➜ '1010111011110110'
-    It's possible to convert 1-6 dice rolls to 0-5 Base 6 using: '651234'.replaceAll('6','0') //➜ '051234'
-*/
-
 // sha256 in JS using the inbuilt crypto API for high performance
 
 ,sha256=async(s,isHex)=>{/* Input a string '' s of any length. Leave isHex blank to input a UTF-8 Text s and output a hexadecimal 64-characters long hash.
@@ -225,6 +175,7 @@ SHA256('010100100100101001010101011001111111000001100111110000001110010111001001
         - stopped any and all unnecessary .length measurements, especially those done in loops.
 */
 
+
 /* Unlike sha256 that is supported by the Crypto API in any JS runtime environment (HTML, NodeJS, Deno & Bun),
     ripemd160 is only supported by the Crypto API in NodeJS & Bun. Deno follows the browser specs by design.
     Below is the ripemd160 implementation using the Crypto API in NodeJS:
@@ -255,13 +206,7 @@ SHA256('010100100100101001010101011001111111000001100111110000001110010111001001
     }// else
         return hash.digest('hex')
 }
-/* e.g. examples from https://en.wikipedia.org/wiki/RIPEMD:
-    ripemd160('') OR ripemd160('',true) //➜ '9c1185a5c5e9fc54612808977ee8f548b2258d31'
-    ripemd160('',false) //➜ '1001110000010001100001011010010111000101111010011111110001010100011000010010100000001000100101110111111011101000111101010100100010110010001001011000110100110001'
 
-    ripemd160('The quick brown fox jumps over the lazy dog') //➜ '37f332f68db77bd9d7edd4969571ad671cf9dd3b'
-    ripemd160('The quick brown fox jumps over the lazy cog') //➜ '132072df690933835eb8b6ad0b77e7b6f14acad7'
-*/
 
 // Below is a custom implementation of RIPEMD160 independent of the NodeJS crypto API.
 ,RotateLeft=(v,n)=>v<<n|v>>>32-n>>>0 // v=value, n=number of bits
@@ -312,7 +257,6 @@ SHA256('010100100100101001010101011001111111000001100111110000001110010111001001
     RIPEMD160('The quick brown fox jumps over the lazy dog') //➜ '37f332f68db77bd9d7edd4969571ad671cf9dd3b'
     RIPEMD160('The quick brown fox jumps over the lazy cog') //➜ '132072df690933835eb8b6ad0b77e7b6f14acad7'
 */
-// To Do: Ask AI whether any of my sha256 or ripemd160 implementations fail for > 1<<30 bytes. If so, suggest changes but do not make any.
 
 
 // Bech32: Use it with RIPEMD160 & SHA256 to generate a Bitcoin BIP84 P2WPKH Native SegWit 42-characters long address from a public key
@@ -349,16 +293,3 @@ SHA256('010100100100101001010101011001111111000001100111110000001110010111001001
     m/84'/0'/0'/1/9: Bech32(RIPEMD160(await sha256('039b2117c54660d84311261b3adacdc3ebada3d3b0c9f60e3bc113378dc876870d',true),true))
         //➜ 'bc1q8u8cck64u9q6498aysq5pt65tg0r24e5yeqw08'
 */
-
-
-
-,ShamirSecretSharing=(X,Y)=>{// SSS calculates the y-intercept for polynomials with known coordinates.
-    /* May Do: Use Hexadecimal numbers. Need to program basic arithmetic +-/* for Hexadecimals. May have VSS: Verifiable Secret Sharing.
-        May use Octal as well. Try to make this possible to do with pen and paper, including using dice 🎲 to generate the random numbers */
-    let y_intercept,n=X.length
-    if(Y.length!==n)return'X and Y must have the length!'
-    // the assumption is that the order of the polynomial function is equal to the number of coordinates minus 1
-
-
-    return y_intercept
-}
