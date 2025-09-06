@@ -2,7 +2,7 @@
 
 // sha256 in JS using the inbuilt crypto API for high performance
 
-,sha256=async(s,isHex)=>{/* Input a string '' s of any length. Leave isHex blank to input a UTF-8 Text s and output a hexadecimal 64-characters long hash.
+const sha256=async(s,isHex)=>{/* Input a string '' s of any length. Leave isHex blank to input a UTF-8 Text s and output a hexadecimal 64-characters long hash.
         Enter isHex as true to input a hexadecimal s and again also output a hexadecimal 64-characters long hash.
         Enter isHex as false to input a binary s and output a binary 256-characters long hash.
     */
@@ -293,3 +293,4 @@ SHA256('010100100100101001010101011001111111000001100111110000001110010111001001
     m/84'/0'/0'/1/9: Bech32(RIPEMD160(await sha256('039b2117c54660d84311261b3adacdc3ebada3d3b0c9f60e3bc113378dc876870d',true),true))
         //➜ 'bc1q8u8cck64u9q6498aysq5pt65tg0r24e5yeqw08'
 */
+
