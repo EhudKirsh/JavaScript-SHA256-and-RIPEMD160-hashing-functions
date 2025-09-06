@@ -5,7 +5,7 @@ The implementations of SHA256 and RIPEMD160 below work on inputs that are smalle
 
 // sha256 in JS using the inbuilt crypto API for high performance
 
-,sha256=async(s,isHex)=>{/* Input a string '' s of any length. Leave isHex blank to input a UTF-8 Text s and output a hexadecimal 64-characters long hash.
+const sha256=async(s,isHex)=>{/* Input a string '' s of any length. Leave isHex blank to input a UTF-8 Text s and output a hexadecimal 64-characters long hash.
         Enter isHex as true to input a hexadecimal s and again also output a hexadecimal 64-characters long hash.
         Enter isHex as false to input a binary s and output a binary 256-characters long hash.
     */
